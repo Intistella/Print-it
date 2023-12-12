@@ -1,97 +1,81 @@
 const slides = [
 	{
-		"image":"slide1.jpg",
+		"image":"assets/images/slideshow/slide1.jpg",
 		"tagLine":"Impressions tous formats <span>en boutique et en ligne</span>"
 	},
 	{
-		"image":"slide2.jpg",
+		"image":"assets/images/slideshow/slide2.jpg",
 		"tagLine":"Tirages haute définition grand format <span>pour vos bureaux et events</span>"
 	},
 	{
-		"image":"slide3.jpg",
+		"image":"assets/images/slideshow/slide3.jpg",
 		"tagLine":"Grand choix de couleurs <span>de CMJN aux pantones</span>"
 	},
 	{
-		"image":"slide4.png",
+		"image":"assets/images/slideshow/slide4.png",
 		"tagLine":"Autocollants <span>avec découpe laser sur mesure</span>"
 	}
 ]
 
-// Longueur du Carrousel
-const carousel = slides.length
+//* Déclaration des variables /arrowLeft et /arrowRight *//
+//* Cela permet au code d'intéragir avec les éléments HTML, qui possédent les classes arrow_left et arrow_right *//
 
-//Slide actuel
+const previous = document.querySelector(".arrow_left")
+const next = document.querySelector(".arrow_right")
+
+const dots = document.querySelectorAll(".dot")
+//* Séléction de tous les bullets points *//
+
 let currentSlide = 0
+//* Ainsi la première diapositive sera affichée par défaut *// 
 
-//Initialisation de la bannière 
-let img = document.querySelector('.banner-img')
-img.setAttribute("src", "./assets/images/slideshow/" + slides[currentSlide]["image"])
 
-//Initialisation du texte
-let tagText = document.getElementById('tagtext')
-tagText.innerHTML = slides[currentSlide]["tagLine"]
+//** Étape 2/5 : Ajouter des Event Listeners sur les flèches et mise en place du défilement infini **//
 
-//Initialisation des bullet points
-for(let i=0; i< carousel; i++){
-	if (i==0){
-		let dot = document.createElement("div")
-		dot.setAttribute("class","dot", "dot_selected")
-		dot.setAttribute ("id", i)
-		let parentElement = document.getElementById('dots')
-		parentElement.appendChild(dot)
-	}else{
-		let dot = document.createElement("div")
-		dot.setAttribute("class", "dot")
-		dot.setAttribute("id", i)
-		let parentElement = document.getElementById('dots')
-		parentElement.appendChild(dot)
+previous.addEventListener("click", function() {
+    console.log("Clique sur la flèche gauche !")
+
+	currentSlide--
+	if (currentSlide < 0) {
+		currentSlide = dots.length - 1
 	}
-}
 
-//Event listener Previous
-const arrowLeft = document.querySelector('.arrow_left')
+	updateBulletPoint()
+	updateSlideContent()
+});
 
-function clickPrevious(){
-	if(currentSlide == 0){
-		currentSlide = carousel - 1
-		img.setAttribute("src", "./assets/images/slideshow/" + slides[currentSlide]["image"])
-		tagText.innerHTML = slides[currentSlide]["tagLine"]
-		dot = document.getElementById(currentSlide)
-		dot.classlist.add("dot_selected")
-		let normalDot = document.getElementById(0)
-		normalDot.classlist.remove("dot_selected")
-	}else{
-		currentSlide--
-		img.setAttribute("src", "./assets/images/slideshow/" + slides[currentSlide]["image"])
-		tagText.innerHTML = slides[currentSlide]["tagLine"]
-		dot = document.getElementById(currentSlide)
-		dot.classlist.add("dot_selected")
-		let normalDot = document.getElementById(currentSlide + 1)
-		normalDot.classlist.remove("dot_selected")
-	}
-}
-arrowLeft.addEventListener('click', clickPrevious)
+next.addEventListener("click", function() {
+    console.log("Clique sur la flèche droite !")
 
-//Event listener Next
-const arrowRight= document.querySelector('.arrow_right')
-
-function clickNext(){
-	if(currentSlide == carousel - 1){
+	currentSlide++;
+	if (currentSlide >= dots.length) {
 		currentSlide = 0
-		img.setAttribute("src", "./assets/images/slideshow/" + slides[currentSlide]["image"])
-		tagText.innerHTML = slides[currentSlide]["tagLine"]
-		dot = document.getElementById(currentSlide)
-		dot.classlist.add("dot_selected")
-		let normalDot = document.getElementById(carousel - 1)
-		normalDot.classlist.remove("dot_selected")
-	}else{
-		currentSlide++
-		img.setAttribute("src", "./assets/images/slideshow/" + slides[currentSlide]["image"])
-		tagText.innerHTML = slides[currentSlide]["tagLine"]
-		dot = document.getElementById(currentSlide)
-		dot.classlist.add("dot_selected")
-		let normalDot = document.getElementById(currentSlide - 1)
-		normalDot.classlist.remove("dot_selected")
 	}
-}	
-arrowRight.addEventListener('click', clickNext)
+
+	updateBulletPoint()
+	updateSlideContent()
+});
+
+
+//** Étape 3 : Ajouter des bullets points au slider **//
+
+function updateBulletPoint() {
+    dots.forEach((dot, index) => {
+        if (index === currentSlide) {
+            dot.classList.add("dot_selected")
+        } else {
+            dot.classList.remove("dot_selected")
+        }
+    });
+}
+
+
+//** Étape 4 : Modifier le slide au clic sur le bouton **//
+
+function updateSlideContent() {
+    const image = document.querySelector(".banner-img")
+    const text = document.querySelector("#banner p")
+    const currentSlideData = slides[currentSlide]
+    text.innerHTML = currentSlideData.tagLine
+	image.src = currentSlideData.image
+}
